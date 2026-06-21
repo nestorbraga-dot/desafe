@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Cardápio digital interativo para pedidos em tempo real. Peça do conforto da sua mesa!">
+  <title>Cardápio Digital - Lanchonete Premium</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- 1. TELA DE BOAS-VINDAS (IDENTIFICAÇÃO MESA & NOME) -->
+  <div id="welcome-overlay" class="welcome-overlay">
+    <div class="welcome-card">
+      <div class="welcome-logo">🍔</div>
+      <h2>Seja Bem-vindo!</h2>
+      <p>Para começar a navegar no nosso cardápio, por favor identifique-se:</p>
+      
+      <form id="welcome-form">
+        <div class="form-group">
+          <label for="input-customer-name">Seu Nome</label>
+          <input type="text" id="input-customer-name" placeholder="Ex: João Silva" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="input-table-number">Número da sua Mesa</label>
+          <input type="number" id="input-table-number" min="1" max="50" placeholder="Ex: 4" required>
+        </div>
+        <button type="submit" id="btn-start-nav" class="btn-primary" style="width: 100%; margin-top: 10px;">
+          Entrar no Cardápio ➔
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. CONTAINER PRINCIPAL DO APLICATIVO -->
+  <div class="app-container">
+    
+    <!-- Cabeçalho -->
+    <header>
+      <div class="logo-area">
+        <div class="logo-icon">🔥</div>
+        <h1 class="gradient-text">BRASA & CIA</h1>
+      </div>
+      <div id="client-badge" class="user-badge" style="display: none;">
+        Mesa <span id="badge-table">0</span> • <span id="badge-name">Cliente</span>
+      </div>
+    </header>
+
+    <!-- Banner Principal -->
+    <section class="hero">
+      <div class="hero-content">
+        <h2>Sabor que Surpreende</h2>
+        <p>Hambúrgueres artesanais grelhados no fogo forte, batatas super crocantes e milkshakes cremosos feitos na hora.</p>
+      </div>
+    </section>
+
+    <!-- Barra de Pesquisa e Filtros de Categoria -->
+    <section class="search-filter-container">
+      <div class="search-bar">
+        <input type="text" id="search-input" placeholder="O que você quer comer hoje?..." autocomplete="off">
+      </div>
+      <div id="categories-tabs-list" class="categories-tabs">
+        <!-- Renderizado via JS -->
+      </div>
+    </section>
+
+    <!-- Área de Produtos -->
+    <main class="menu-section">
+      <h2 id="current-category-title" class="section-title">Nossos Hambúrgueres</h2>
+      <div id="products-grid-container" class="products-grid">
+        <!-- Renderizado via JS -->
+      </div>
+    </main>
+
+    <!-- RASTREADOR DE PEDIDOS EM TEMPO REAL -->
+    <section id="order-tracker" class="status-tracker-container">
+      <div class="tracker-header">
+        <h3>Acompanhe seu Pedido</h3>
+        <div class="tracker-id">Pedido: <span id="tracker-order-id">#000000</span></div>
+      </div>
+      <div class="tracker-steps">
+        <div id="tracker-progress" class="tracker-progress-bar"></div>
+        
+        <div id="step-pending" class="step-node completed">
+          <div class="step-dot">📝</div>
+          <div class="step-label">Pendente</div>
+        </div>
+        <div id="step-preparing" class="step-node">
+          <div class="step-dot">🍳</div>
+          <div class="step-label">Cozinhando</div>
+        </div>
+        <div id="step-delivered" class="step-node">
+          <div class="step-dot">🍔</div>
+          <div class="step-label">Entregue</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- 3. BOTÃO FLUTUANTE DO CARRINHO -->
+  <button id="float-cart-btn" class="cart-float-btn" style="display: none;">
+    🛒
+    <span id="cart-counter" class="cart-badge">0</span>
+  </button>
+
+  <!-- 4. GAVETA LATERAL DO CARRINHO (DRAWER) -->
+  <div id="cart-drawer-overlay" class="cart-drawer-overlay">
+    <div class="cart-drawer">
+      <div class="cart-header">
+        <h3>Seu Carrinho</h3>
+        <button id="close-cart-btn" class="close-drawer">✕</button>
+      </div>
+      
+      <div id="cart-items-container" class="cart-items">
+        <!-- Itens do carrinho aparecem aqui -->
+      </div>
+
+      <div class="cart-footer">
+        <div class="cart-summary-line">
+          <span>Subtotal</span>
+          <span id="cart-subtotal">R$ 0,00</span>
+        </div>
+        <div class="cart-summary-line">
+          <span>Taxa de Serviço</span>
+          <span style="color: var(--success);">Grátis</span>
+        </div>
+        <div class="cart-summary-line total">
+          <span>Total</span>
+          <span id="cart-total-value">R$ 0,00</span>
+        </div>
+        <button id="btn-submit-order" class="btn-primary btn-checkout">
+          Enviar Pedido para a Cozinha 🚀
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. MODAL DE DETALHES E OBSERVAÇÕES DO PRODUTO -->
+  <div id="detail-modal-overlay" class="modal-overlay">
+    <div class="modal-content">
+      <img id="modal-product-img" src="" alt="Foto do Produto" class="modal-image">
+      <div class="modal-body">
+        <div class="modal-title-area">
+          <h3 id="modal-product-name" class="modal-title">Nome do Prato</h3>
+          <span id="modal-product-price" class="modal-price">R$ 0,00</span>
+        </div>
+        <p id="modal-product-desc" class="modal-description">Descrição deliciosa do hambúrguer.</p>
+        
+        <div class="form-group" style="margin-top: 15px;">
+          <label for="modal-product-obs" style="font-weight: 600;">Alguma observação? (Opcional)</label>
+          <textarea id="modal-product-obs" rows="2" placeholder="Ex: Sem cebola, ponto da carne ao ponto, etc."></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <div class="modal-qty-selector">
+            <button id="modal-btn-minus" class="qty-btn">-</button>
+            <span id="modal-qty-val" class="qty-val">1</span>
+            <button id="modal-btn-plus" class="qty-btn">+</button>
+          </div>
+          <button id="modal-btn-add-to-cart" class="btn-primary modal-submit-btn">
+            Adicionar ao Carrinho
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="menu-data.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseConfig.js"></script>
+  <script src="data-service.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

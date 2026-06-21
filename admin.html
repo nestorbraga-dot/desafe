@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Painel de controle administrativo e monitor da cozinha em tempo real.">
+  <title>Painel Admin & Cozinha - Lanchonete</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="admin-container">
+    
+    <!-- Barra de Navegação Admin -->
+    <nav class="admin-nav">
+      <div class="logo-area">
+        <div class="logo-icon" style="background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);">👑</div>
+        <h1>Painel do Estabelecimento</h1>
+      </div>
+      <div class="admin-tabs">
+        <button id="tab-btn-kitchen" class="admin-tab-btn active">🍳 Cozinha / Pedidos</button>
+        <button id="tab-btn-menu" class="admin-tab-btn">🍔 Gerenciar Cardápio</button>
+      </div>
+      <div class="user-badge" style="background: rgba(255, 184, 0, 0.05); border-color: rgba(255, 184, 0, 0.2);">
+        Sessão: <span id="admin-session-badge" style="color: var(--accent);">Admin Cozinha</span>
+      </div>
+    </nav>
+
+    <!-- Área de Conteúdo Principal -->
+    <main class="admin-main">
+
+      <!-- 1. MONITOR DA COZINHA (KANBAN) -->
+      <section id="panel-kitchen" class="admin-panel-view active">
+        <div class="kanban-board">
+          
+          <!-- Coluna 1: Pendente -->
+          <div class="kanban-column column-pendente">
+            <div class="column-header">
+              <div class="column-title-wrapper">
+                <span>📝</span>
+                <h3 class="column-title">Pendentes</h3>
+              </div>
+              <span id="badge-count-pending" class="column-badge">0</span>
+            </div>
+            <div id="list-pending" class="column-list">
+              <!-- Cards de pedidos pendentes -->
+            </div>
+          </div>
+
+          <!-- Coluna 2: Em Preparo -->
+          <div class="kanban-column column-preparo">
+            <div class="column-header">
+              <div class="column-title-wrapper">
+                <span>🍳</span>
+                <h3 class="column-title">Em Preparo</h3>
+              </div>
+              <span id="badge-count-preparing" class="column-badge">0</span>
+            </div>
+            <div id="list-preparing" class="column-list">
+              <!-- Cards de pedidos em preparo -->
+            </div>
+          </div>
+
+          <!-- Coluna 3: Entregue -->
+          <div class="kanban-column column-entregue">
+            <div class="column-header">
+              <div class="column-title-wrapper">
+                <span>✅</span>
+                <h3 class="column-title">Entregues</h3>
+              </div>
+              <span id="badge-count-delivered" class="column-badge">0</span>
+            </div>
+            <div id="list-delivered" class="column-list">
+              <!-- Cards de pedidos entregues -->
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 2. GERENCIADOR DE CARDÁPIO (CRUD) -->
+      <section id="panel-menu" class="admin-panel-view">
+        <div class="crud-container">
+          
+          <!-- Tabela de Produtos -->
+          <div class="crud-table-card">
+            <div class="crud-table-header">
+              <h3>Lista de Produtos</h3>
+              <button id="btn-reset-initial-menu" class="btn-secondary" style="padding: 8px 16px; font-size: 13px;">
+                ♻️ Restaurar Cardápio Padrão
+              </button>
+            </div>
+            
+            <div style="overflow-x: auto;">
+              <table class="crud-table">
+                <thead>
+                  <tr>
+                    <th>Foto</th>
+                    <th>Nome / Categoria</th>
+                    <th>Descrição</th>
+                    <th>Preço</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="crud-products-body">
+                  <!-- Linhas da tabela de produtos renderizadas via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Formulário de Cadastro / Edição -->
+          <div class="crud-form-card">
+            <h3 id="form-title">Cadastrar Novo Produto</h3>
+            <form id="product-form">
+              <input type="hidden" id="form-product-id">
+              
+              <div class="form-group">
+                <label for="form-product-name">Nome do Produto</label>
+                <input type="text" id="form-product-name" placeholder="Ex: Smash Salad Bacon" required autocomplete="off">
+              </div>
+
+              <div class="form-group">
+                <label for="form-product-category">Categoria</label>
+                <select id="form-product-category" required>
+                  <!-- Opções renderizadas via JS -->
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="form-product-price">Preço (R$)</label>
+                <input type="number" id="form-product-price" step="0.01" min="0.10" placeholder="Ex: 29.90" required>
+              </div>
+
+              <div class="form-group">
+                <label for="form-product-desc">Descrição / Ingredientes</label>
+                <textarea id="form-product-desc" rows="3" placeholder="Ingredientes e detalhes..." required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="form-product-image">URL da Imagem</label>
+                <select id="form-product-image" required>
+                  <option value="assets/monster_cheddar.png">🍔 Hambúrguer Gourmet (Monster Cheddar)</option>
+                  <option value="assets/smash_salada.png">🍔 Smash Cheeseburger (Smash Duplo)</option>
+                  <option value="assets/gorgonzola_gourmet.png">🍔 Hambúrguer de Costela (Gorgonzola)</option>
+                  <option value="assets/batata_rustica.png">🍟 Batatas Fritas / Rústicas</option>
+                  <option value="assets/onion_rings.png">🍟 Cebolas Empanadas (Onion Rings)</option>
+                  <option value="assets/pink_lemonade.png">🥤 Pink Lemonade / Bebidas Copo</option>
+                  <option value="assets/refrigerante.png">🥤 Refrigerante Lata / Gelado</option>
+                  <option value="assets/milkshake_nutella.png">🍦 Milkshake / Bebida Doce</option>
+                  <option value="assets/taca_brownie.png">🍦 Brownie / Sobremesas</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="form-product-tags">Tags (separadas por vírgula)</label>
+                <input type="text" id="form-product-tags" placeholder="Ex: Clássico, Vegetariano, Apimentado">
+              </div>
+
+              <div class="checkbox-group">
+                <input type="checkbox" id="form-product-available" checked>
+                <label for="form-product-available">Produto Disponível no Cardápio</label>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" id="btn-cancel-edit" class="btn-secondary" style="display: none;">Cancelar</button>
+                <button type="submit" id="btn-save-product" class="btn-primary">Salvar Produto</button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseConfig.js"></script>
+  <script src="data-service.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

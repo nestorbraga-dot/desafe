@@ -107,6 +107,17 @@ const DEFAULT_PRODUCTS = [
     available: true,
     tags: ['Doce']
   }
+,
+  {
+    id: 'prod-10',
+    name: 'Doce Sabor',
+    description: 'Delicioso doce artesanal com sabor especial.',
+    price: 15.00,
+    category: 'desserts',
+    image: 'assets/doce_sabor.png',
+    available: true,
+    tags: ['Doce', 'Sabor']
+  }
 ];
 
 // Existing code continues;

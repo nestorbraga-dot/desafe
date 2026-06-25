@@ -42,7 +42,7 @@
               </div>
               <span id="badge-count-pending" class="column-badge">0</span>
             </div>
-            <div id="list-pending" class="column-list">
+            
               <!-- Cards de pedidos pendentes -->
             </div>
           </div>
@@ -83,32 +83,15 @@
         <div class="crud-container">
           
           <!-- Tabela de Produtos -->
-          <div class="crud-table-card">
-            <div class="crud-table-header">
-              <h3>Lista de Produtos</h3>
-              <button id="btn-reset-initial-menu" class="btn-secondary" style="padding: 8px 16px; font-size: 13px;">
-                ♻️ Restaurar Cardápio Padrão
-              </button>
-            </div>
-            
-            <div style="overflow-x: auto;">
-              <table class="crud-table">
-                <thead>
-                  <tr>
-                    <th>Foto</th>
-                    <th>Nome / Categoria</th>
-                    <th>Descrição</th>
-                    <th>Preço</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody id="crud-products-body">
-                  <!-- Linhas da tabela de produtos renderizadas via JS -->
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <div class="products-grid-card">
+  <div class="crud-table-header">
+    <h3>Lista de Produtos</h3>
+    <button id="btn-reset-initial-menu" class="btn-secondary" style="padding: 8px 16px; font-size: 13px;">
+      ♻️ Restaurar Cardápio Padrão
+    </button>
+  </div>
+  <div class="products-grid" id="products-grid"></div>
+</div>
 
           <!-- Formulário de Cadastro / Edição -->
           <div class="crud-form-card">

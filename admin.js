@@ -23,7 +23,7 @@ const badgeCountPreparing = document.getElementById('badge-count-preparing');
 const badgeCountDelivered = document.getElementById('badge-count-delivered');
 
 // CRUD Formulário e Tabela
-const crudProductsBody = document.getElementById('crud-products-body');
+const productsGrid = document.getElementById('products-grid');
 const productForm = document.getElementById('product-form');
 const formProductId = document.getElementById('form-product-id');
 const formProductName = document.getElementById('form-product-name');
@@ -42,9 +42,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Carrega dados
   await loadData();
 
-  // Inicializa visual do Kanban e Tabela CRUD
+  // Inicializa visual do Kanban e Grid CRUD
   renderKitchenBoard();
-  renderProductsTable();
+  renderProductsGrid();
   populateCategoryDropdown();
 
   // Configura Event Listeners
@@ -63,20 +63,24 @@ async function loadData() {
 
 // --- CONFIGURAR EVENT LISTENERS ---
 function setupEventListeners() {
-  // Troca de Abas
-  tabBtnKitchen.addEventListener('click', () => {
-    tabBtnKitchen.classList.add('active');
-    tabBtnMenu.classList.remove('active');
-    panelKitchen.classList.add('active');
-    panelMenu.classList.remove('active');
-  });
+  // Troca de Abas with safety checks
+  if (tabBtnKitchen && tabBtnMenu && panelKitchen && panelMenu) {
+    tabBtnKitchen.addEventListener('click', () => {
+      tabBtnKitchen.classList.add('active');
+      tabBtnMenu.classList.remove('active');
+      panelKitchen.classList.add('active');
+      panelMenu.classList.remove('active');
+    });
 
-  tabBtnMenu.addEventListener('click', () => {
-    tabBtnMenu.classList.add('active');
-    tabBtnKitchen.classList.remove('active');
-    panelMenu.classList.add('active');
-    panelKitchen.classList.remove('active');
-  });
+    tabBtnMenu.addEventListener('click', () => {
+      tabBtnMenu.classList.add('active');
+      tabBtnKitchen.classList.remove('active');
+      panelMenu.classList.add('active');
+      panelKitchen.classList.remove('active');
+    });
+  } else {
+    console.warn('Tab buttons or panels missing in DOM');
+  }
 
   // Formulário CRUD - Envio (Adicionar / Editar)
   productForm.addEventListener('submit', handleProductFormSubmit);
@@ -89,7 +93,7 @@ function setupEventListeners() {
     if (confirm('Tem certeza que deseja restaurar o cardápio padrão da lanchonete? Isso apagará as alterações feitas.')) {
       localStorage.removeItem('cardapio_products');
       await loadData();
-      renderProductsTable();
+      renderProductsGrid();
       // Notifica o cliente
       dataService.saveProducts(products);
     }
@@ -242,41 +246,30 @@ function populateCategoryDropdown() {
   });
 }
 
-function renderProductsTable() {
-  crudProductsBody.innerHTML = '';
+function renderProductsGrid() {
+  productsGrid.innerHTML = '';
   
   products.forEach(p => {
-    const tr = document.createElement('tr');
+    const card = document.createElement('div');
     const categoryName = categories.find(c => c.id === p.category)?.name || p.category;
     
-    tr.innerHTML = `
-      <td>
-        <img src="${p.image}" alt="${p.name}" class="crud-prod-img" onerror="this.src='https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150'">
-      </td>
-      <td>
-        <strong style="display: block; font-size: 15px;">${p.name}</strong>
-        <span style="font-size: 12px; color: var(--text-secondary);">${categoryName}</span>
-      </td>
-      <td style="color: var(--text-secondary); font-size: 13px; max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${p.description}">
-        ${p.description}
-      </td>
-      <td style="font-weight: 700; color: var(--accent);">
-        R$ ${p.price.toFixed(2).replace('.', ',')}
-      </td>
-      <td>
-        <span class="status-indicator ${p.available ? 'available' : 'unavailable'}">
-          ${p.available ? 'Disponível' : 'Indisponível'}
-        </span>
-      </td>
-      <td>
-        <div class="action-buttons">
-          <button class="btn-icon edit" onclick="startEditProduct('${p.id}')" title="Editar item">✏️</button>
-          <button class="btn-icon" onclick="toggleProductAvailability('${p.id}')" title="Alternar Disponibilidade">🔌</button>
-          <button class="btn-icon delete" onclick="deleteProduct('${p.id}')" title="Excluir item">🗑️</button>
-        </div>
-      </td>
+    card.className = 'product-card';
+    card.dataset.id = p.id;
+    
+    card.innerHTML = `
+      <img src="${p.image}" alt="${p.name}" class="product-img" onerror="this.src='https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=150'" />
+      <h4 class="product-name">${p.name}</h4>
+      <p class="product-category">${categoryName}</p>
+      <p class="product-description" title="${p.description}">${p.description}</p>
+      <p class="product-price">R$ ${p.price.toFixed(2).replace('.', ',')}</p>
+      <p class="product-status ${p.available ? 'available' : 'unavailable'}">${p.available ? 'Disponível' : 'Indisponível'}</p>
+      <div class="card-actions">
+        <button class="btn-icon edit" onclick="startEditProduct('${p.id}')" title="Editar item">✏️</button>
+        <button class="btn-icon" onclick="toggleProductAvailability('${p.id}')" title="Alternar Disponibilidade">🔌</button>
+        <button class="btn-icon delete" onclick="deleteProduct('${p.id}')" title="Excluir item">🗑️</button>
+      </div>
     `;
-    crudProductsBody.appendChild(tr);
+    productsGrid.appendChild(card);
   });
 }
 
@@ -308,7 +301,7 @@ async function handleProductFormSubmit(e) {
 
   // Recarrega lista, recria tabela e reseta form
   await loadData();
-  renderProductsTable();
+  renderProductsGrid();
   resetProductForm();
 }
 
@@ -346,7 +339,7 @@ window.deleteProduct = async (productId) => {
     const success = await dataService.deleteProduct(productId);
     if (success) {
       await loadData();
-      renderProductsTable();
+      renderProductsGrid();
     }
   }
 };
@@ -359,7 +352,7 @@ window.toggleProductAvailability = async (productId) => {
   p.available = !p.available;
   await dataService.updateProduct(p);
   await loadData();
-  renderProductsTable();
+  renderProductsGrid();
 };
 
 // --- REALTIME SUBSCRIPTION (SINCRONIZAÇÃO E ALERTA) ---
@@ -378,7 +371,7 @@ function setupRealtimeSubscription() {
     // 2. Escuta mudanças de produtos feitas em outras abas
     if (msg.type === 'PRODUCTS_UPDATED') {
       products = await dataService.getProducts();
-      renderProductsTable();
+      renderProductsGrid();
     }
 
     // 3. Escuta atualizações de status feitas em outras abas

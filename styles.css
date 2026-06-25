@@ -1308,7 +1308,52 @@ header {
     font-size: 24px;
   }
   .products-grid {
-    grid-template-columns: 1fr;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.product-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: cardEntry 0.3s ease-out;
+}
+.product-card:hover {
+  transform: translateY(-4px);
+}
+.product-img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.5rem;
+}
+.product-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0.5rem 0 0.2rem;
+}
+.product-category, .product-description, .product-price, .product-status {
+  font-size: 0.9rem;
+  margin: 0.2rem 0;
+}
+.product-status.available {
+  color: var(--accent);
+}
+.product-status.unavailable {
+  color: var(--danger);
+}
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+}
   }
   .welcome-card {
     padding: 24px;

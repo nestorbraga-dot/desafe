@@ -124,13 +124,10 @@ const DEFAULT_PRODUCTS = [
 
 // Canal de comunicação em tempo real entre abas do navegador
 const channel = new BroadcastChannel('cardapio_realtime');
-// Initialize Supabase client if SDK is loaded
-let supabase = null;
-if (typeof window !== 'undefined' && window.SUPABASE_URL && window.SUPABASE_ANON_KEY && typeof createClient === 'function') {
-  supabase = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
-}
+// Initialize Supabase client from global if available
+let supabase = window.supabase || null;
 
-const dataService = {
+var dataService = {
   // --- CATEGORIAS ---
   async getCategories() {
     // Try Supabase first
